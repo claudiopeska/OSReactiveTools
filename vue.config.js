@@ -34,7 +34,8 @@ module.exports = {
         {
           from: path.resolve(`src/manifest.${process.env.NODE_ENV}.json`),
           to: `${path.resolve('dist')}/manifest.json`
-        }
+        },
+        { from: 'src/assets', to: 'assets' }, //ignore: ['icon.xcf']
       ])
     ],
     output: {
@@ -43,3 +44,5 @@ module.exports = {
     }
   }
 }
+
+
