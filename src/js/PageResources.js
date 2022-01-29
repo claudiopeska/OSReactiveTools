@@ -28,11 +28,8 @@ export default {
             }
 
             var searchResult = {};
-            //we need a clone since we might change the data action inside to match search.
-            //we dont wanna mess with the original value
-            var resourcesClone = JSON.parse(JSON.stringify(this.resources));
 
-            Object.entries(resourcesClone).forEach( ([rkey, rvalue]) => {
+            Object.entries(this.resources).forEach( ([rkey, rvalue]) => {
                 if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
                     searchResult[rkey] = rvalue;
                     return;
@@ -46,7 +43,7 @@ export default {
                 });
                 
                 if (Object.keys(dataActionsResult).length) {
-                    searchResult[rkey] = rvalue;
+                    searchResult[rkey] = {...rvalue};
                     searchResult[rkey].dataActions = dataActionsResult;
                 }
             });
