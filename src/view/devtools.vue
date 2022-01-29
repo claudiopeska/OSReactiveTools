@@ -2,7 +2,10 @@
   <b-container fluid class="main_app bg-light-gray">
     <b-row class="header border-bottom border-gray">
       <b-col>
-        <h4>OutSystems Reactive Tools</h4>
+        <h3>OutSystems Reactive Tools</h3>
+      </b-col>
+      <b-col>
+        <b-button size="sm" v-on:click="refresh">Analyze Data</b-button>
       </b-col>
     </b-row>
     <div class="content">
@@ -19,6 +22,11 @@ export default {
   components: {
     resources: PageResources,
   },
+  methods:{
+    refresh: function(){
+      chrome.devtools.inspectedWindow.reload();
+    }
+  }
 };
 </script>
 

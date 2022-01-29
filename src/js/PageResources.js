@@ -1,14 +1,28 @@
 import { bTreeView } from 'bootstrap-vue-treeview'
+import { JSONView } from "vue-json-component";
+
+const resourceTypeMapIcon = {
+    "WebScreen": "bi-window",
+    "WebBlock": "bi-puzzle",
+    "ScreenDataSet": "bi-table",
+    "DataAction": "bi-box-arrow-left",
+}
+
+const acceptRequestTypes = ["xhr"];
+//regex to identify resource and action from request url
+const requestUrlRegex = /(\w+\/\w+\/\w+)\/(\w+)$/g;
 
 export default {
     components: {
-        bTreeView
+        bTreeView,
+        "json-view": JSONView
     },
     data() {
         return {
             resources: null,
             treeData: null,
-            searchKeyword: null
+            searchKeyword: null,
+            selectedNode: null
         }
     },
     mounted() {
@@ -18,42 +32,72 @@ export default {
                 this.treeData = this.buildTreeData(resultResources);
             }
         });
+        
+        chrome.devtools.network.onRequestFinished.addListener((request) => {
+            if (acceptRequestTypes.indexOf(request._resourceType) >= 0) {
+                //reset regex
+                requestUrlRegex.lastIndex = 0;
+
+                var regexResult = requestUrlRegex.exec(request.request.url);
+                if (!regexResult || regexResult.length == 0) {
+                    return;
+                }
+
+                regexResult[1] = regexResult[1].replaceAll("/", ".");
+
+                var dataAction = this.resources[regexResult[1]]?.dataActions[regexResult[2]];
+                if (!dataAction) { return; }
+
+                request.getContent((content) => {
+                    this.$set(dataAction, "data", JSON.parse(content).data);
+                    this.treeData = this.buildTreeData(this.resources);
+                });
+            }
+        });
     },
     methods: {
-        searchTree: function () {
+        searchTree() {
             var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
-            if(lowerSearchKeyword.length == 0){
-                this.treeData = this.buildTreeData(this.resources); 
-                return; 
+            if (lowerSearchKeyword.length == 0) {
+                this.treeData = this.buildTreeData(this.resources);
+                return;
             }
 
             var searchResult = {};
 
-            Object.entries(this.resources).forEach( ([rkey, rvalue]) => {
+            Object.entries(this.resources).forEach(([rkey, rvalue]) => {
                 if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
                     searchResult[rkey] = rvalue;
                     return;
                 }
 
-                var dataActionsResult = {};
-                Object.entries(rvalue.dataActions).forEach( ([dakey, davalue]) => {
+                Object.entries(rvalue.dataActions).forEach(([dakey, davalue]) => {
                     if (dakey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
-                        dataActionsResult[dakey] = davalue;
+                        if (!searchResult[rkey]) {
+                            searchResult[rkey] = { ...rvalue };
+                            searchResult[rkey].dataActions = {};
+                        }
+                        searchResult[rkey].dataActions[dakey] = davalue;
                     }
                 });
-                
-                if (Object.keys(dataActionsResult).length) {
-                    searchResult[rkey] = {...rvalue};
-                    searchResult[rkey].dataActions = dataActionsResult;
-                }
             });
             this.treeData = this.buildTreeData(searchResult);
         },
-        buildTreeData: function (resources) {
+        buildTreeData(resources) {
             return [{ id: -1, name: "App", icon: "bi-code-square", children: createResourcesHierarchy(resources) }];
+        },
+        appNodeSelect(node, isSelected){
+            if(isSelected){
+                this.selectedNode = node.data.children;
+                if(!this.selectedNode){
+                    this.selectedNode = node.data;
+                }
+            }
         }
     }
 };
+
+
 
 //processCallback will be called when resources finishes processing
 var PageResources = function (processCallback) {
@@ -76,11 +120,11 @@ var PageResources = function (processCallback) {
     const fetchsRegex = [
         {
             regexExp: dataActionRegex,
-            type: "ScreenData"
+            type: "DataAction"
         },
         {
             regexExp: aggrActionRegex,
-            type: "DataAction"
+            type: "ScreenDataSet"
         }
     ];
 
@@ -122,7 +166,7 @@ var PageResources = function (processCallback) {
             if (!regexResult) {
                 return result;
             }
-            
+
             //create a dictionary object with the resource url
             var resourceObject = {
                 name: regexResult[1],
@@ -138,7 +182,7 @@ var PageResources = function (processCallback) {
                     if (dataActionName) {
                         dataActionName.lineNumber = index;
                         dataActionName.debugLine = index + 3
-                        linesResult[dataActionName.name] = dataActionName;
+                        linesResult[dataActionName[0]] = dataActionName[1];
                     }
                     else {
                         //reset regex index
@@ -171,10 +215,13 @@ var PageResources = function (processCallback) {
 
             var regexResult = currReg.regexExp.exec(value);
             if (regexResult && regexResult.length > 1) {
-                return {
-                    name: regexResult[1],
-                    type: currReg.type
-                };
+                return [
+                    currReg.type + regexResult[1],
+                    {
+                        name: regexResult[1],
+                        type: currReg.type
+                    }
+                ];
             }
         }
         return null;
@@ -198,20 +245,15 @@ var PageResources = function (processCallback) {
 
 
 function createResourcesHierarchy(resources) {
-    var resourceTypeMapIcon = {
-        "WebScreen": "bi-window",
-        "WebBlock": "bi-puzzle",
-        "DataAction": "bi-table",
-        "ScreenData": "bi-box-arrow-left",
-    }
     var hierarchy = [];
     Object.entries(resources).forEach(([rkey, rvalue], rindex) => {
         var dataActions = [];
-        Object.entries(rvalue.dataActions).forEach(([dakey, davalue], daindex) => {
+        Object.entries(rvalue.dataActions).forEach(([, davalue], daindex) => {
             dataActions.push({
                 id: daindex + (10000 * rindex),
-                name: dakey,
+                name: davalue.name,
                 icon: resourceTypeMapIcon[davalue.type],
+                data: davalue.data,
             });
         });
         hierarchy.push(
