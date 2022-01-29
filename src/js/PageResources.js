@@ -7,31 +7,56 @@ export default {
     data() {
         return {
             resources: null,
-            treeData: [
-                {
-                    "id": 2, "name": "Venus", "icon": "bi-puzzle",
-                    "children": [
-                        { "id": 3, "name": "Neptune" },
-                        { "id": 4, "name": "Stratus" }
-                    ]
-                }
-            ]
+            treeData: null,
+            searchKeyword: null
         }
     },
     mounted() {
         PageResources((resultResources) => {
-            this.resources = resultResources;
-            this.treeData = [{ id: -1, name: "App", icon: "bi-code-square", children: createResourcesHierarchy(resultResources) }];
+            if (resultResources) {
+                this.resources = resultResources;
+                this.treeData = this.buildTreeData(resultResources);
+            }
         });
+    },
+    methods: {
+        searchTree: function () {
+            var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
+            if(lowerSearchKeyword.length == 0){
+                this.treeData = this.buildTreeData(this.resources); 
+                return; 
+            }
+
+            var searchResult = {};
+            //we need a clone since we might change the data action inside to match search.
+            //we dont wanna mess with the original value
+            var resourcesClone = JSON.parse(JSON.stringify(this.resources));
+
+            Object.entries(resourcesClone).forEach( ([rkey, rvalue]) => {
+                if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
+                    searchResult[rkey] = rvalue;
+                    return;
+                }
+
+                var dataActionsResult = {};
+                Object.entries(rvalue.dataActions).forEach( ([dakey, davalue]) => {
+                    if (dakey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
+                        dataActionsResult[dakey] = davalue;
+                    }
+                });
+                
+                if (Object.keys(dataActionsResult).length) {
+                    searchResult[rkey] = rvalue;
+                    searchResult[rkey].dataActions = dataActionsResult;
+                }
+            });
+            this.treeData = this.buildTreeData(searchResult);
+        },
+        buildTreeData: function (resources) {
+            return [{ id: -1, name: "App", icon: "bi-code-square", children: createResourcesHierarchy(resources) }];
+        }
     }
 };
-/*
-ICONS:
--Screens: bi-window
--Webblock: bi-puzzle
--ScreenData: bi-table
--DataAction: bi-box-arrow-left
-*/
 
 //processCallback will be called when resources finishes processing
 var PageResources = function (processCallback) {
@@ -65,12 +90,14 @@ var PageResources = function (processCallback) {
     var widgetResources;
     //widgetResource data example
     //{
-    //    "<file-url>":{
+    //    "<widget-path-name>":{
     //        "name": "<widget-path-name>",
+    //        "url": "<file-url>",
     //        "type": "WebScreen|WebBlock"
     //        "dataActions":{
-    //            "<action-return-line>": {
+    //            "<action name>": {
     //                "lineNumber": "<action-signature-line>",
+    //                "debugLine": "<action-return-line>",
     //                "type": "Fetch|Aggr"
     //                "name": "<action name>"
     //            }
@@ -98,10 +125,13 @@ var PageResources = function (processCallback) {
             if (!regexResult) {
                 return result;
             }
-
+            
             //create a dictionary object with the resource url
-            var resourceObject = { name: regexResult[1] };
-            result[resource.url] = resourceObject;
+            var resourceObject = {
+                name: regexResult[1],
+                url: resource.url
+            };
+            result[regexResult[1]] = resourceObject;
 
             resource.getContent((content) => {
                 var lines = content.split(newLineRegex);
@@ -110,7 +140,8 @@ var PageResources = function (processCallback) {
                     var dataActionName = getDataActionRegex(line);
                     if (dataActionName) {
                         dataActionName.lineNumber = index;
-                        linesResult[index + 3] = dataActionName;
+                        dataActionName.debugLine = index + 3
+                        linesResult[dataActionName.name] = dataActionName;
                     }
                     else {
                         //reset regex index
@@ -157,8 +188,8 @@ var PageResources = function (processCallback) {
 
         //callback inside timeout to make sure any last resource getContent finishes
         setTimeout(() => {
-            processCallback(widgetResources);
-        }, 10);
+            processCallback(Object.keys(widgetResources).length ? widgetResources : null);
+        }, 100);
     }
 
     loadResources();
@@ -170,16 +201,31 @@ var PageResources = function (processCallback) {
 
 
 function createResourcesHierarchy(resources) {
+    var resourceTypeMapIcon = {
+        "WebScreen": "bi-window",
+        "WebBlock": "bi-puzzle",
+        "DataAction": "bi-table",
+        "ScreenData": "bi-box-arrow-left",
+    }
     var hierarchy = [];
-    Object.entries(resources).forEach(([, rvalue], rIndex) => {
+    Object.entries(resources).forEach(([rkey, rvalue], rindex) => {
+        var dataActions = [];
+        Object.entries(rvalue.dataActions).forEach(([dakey, davalue], daindex) => {
+            dataActions.push({
+                id: daindex + (10000 * rindex),
+                name: dakey,
+                icon: resourceTypeMapIcon[davalue.type],
+            });
+        });
         hierarchy.push(
             {
-                id: rIndex,
-                name: rvalue.name,
-                icon: "bi-window"
+                id: rindex,
+                name: rkey,
+                icon: resourceTypeMapIcon[rvalue.type],
+                children: dataActions
             }
         );
     });
-    
+
     return hierarchy;
 }
