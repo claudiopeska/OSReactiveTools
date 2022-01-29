@@ -49,7 +49,7 @@ export default {
                 if (!dataAction) { return; }
 
                 request.getContent((content) => {
-                    this.$set(dataAction, "data", JSON.parse(content).data);
+                    this.$set(dataAction, "response", JSON.parse(content).data);
                     this.treeData = this.buildTreeData(this.resources);
                 });
             }
@@ -93,6 +93,12 @@ export default {
                     this.selectedNode = node.data;
                 }
             }
+        },
+        openResourceAction(){
+            chrome.devtools.panels.openResource(
+                this.selectedNode.data.url,
+                this.selectedNode.data.debugLine
+            );
         }
     }
 };
@@ -136,7 +142,8 @@ var PageResources = function (processCallback) {
     //        "url": "<file-url>",
     //        "type": "WebScreen|WebBlock"
     //        "dataActions":{
-    //            "<action name>": {
+    //            "<type><action name>": {
+    //                "url": <file-url>
     //                "lineNumber": "<action-signature-line>",
     //                "debugLine": "<action-return-line>",
     //                "type": "Fetch|Aggr"
@@ -180,8 +187,9 @@ var PageResources = function (processCallback) {
                     //validate if line has data action
                     var dataActionName = getDataActionRegex(line);
                     if (dataActionName) {
-                        dataActionName.lineNumber = index;
-                        dataActionName.debugLine = index + 3
+                        dataActionName[1].url = resource.url;
+                        dataActionName[1].lineNumber = index;
+                        dataActionName[1].debugLine = index + 3
                         linesResult[dataActionName[0]] = dataActionName[1];
                     }
                     else {
@@ -253,7 +261,7 @@ function createResourcesHierarchy(resources) {
                 id: daindex + (10000 * rindex),
                 name: davalue.name,
                 icon: resourceTypeMapIcon[davalue.type],
-                data: davalue.data,
+                data: davalue,
             });
         });
         hierarchy.push(

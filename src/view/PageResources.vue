@@ -7,16 +7,16 @@
           <b-form-input
             v-model="searchKeyword"
             placeholder="Search"
-            @change="searchTree"
-          ></b-form-input>
+            @change="searchTree">
+          </b-form-input>
         </b-input-group>
         <b-tree-view
           :data="treeData"
           :showIcons="true"
           :iconClassProp="icon"
           :contextMenu="false"
-          @nodeSelect="appNodeSelect"
-        ></b-tree-view>
+          @nodeSelect="appNodeSelect">
+        </b-tree-view>
       </div>
       <div v-else>No Resources found...</div>
     </b-col>
@@ -29,11 +29,29 @@
             :showIcons="true"
             :iconClassProp="icon"
             :contextMenu="false"
-            @nodeSelect="appNodeSelect"
-          ></b-tree-view>
+            @nodeSelect="appNodeSelect">
+          </b-tree-view>
         </div>
-        <div v-else-if="selectedNode.data"><json-view :data="selectedNode.data" :maxDepth="1" /></div>
-        <div v-else>No data yet</div>
+        <div v-else>
+          <b-row>
+            <b-col class="font-weight-bold">
+              <i v-bind:class="selectedNode.icon"></i>
+              {{ selectedNode.name }}
+            </b-col>
+            <b-col cols="auto">
+              <b-button
+                size="sm"
+                variant="info"
+                v-on:click="openResourceAction">
+                Open Action Return
+              </b-button>
+            </b-col>
+          </b-row>
+          <div v-if="selectedNode.data.response">
+            <json-view :data="selectedNode.data.response" :maxDepth="1" />
+          </div>
+          <div v-else><b-col>No data yet</b-col></div>
+        </div>
       </div>
       <div v-else>No node selected</div>
     </b-col>
