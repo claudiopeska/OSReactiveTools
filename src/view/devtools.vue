@@ -5,7 +5,7 @@
         <h3>OutSystems Reactive Tools</h3>
       </b-col>
       <b-col>
-        <b-button size="sm" v-on:click="refresh">Analyze Data</b-button>
+        <b-button size="sm" v-on:click="refresh" v-bind:disabled="analizeButton.disabled">{{ analizeButton.label }}</b-button>
       </b-col>
     </b-row>
     <div class="content">
@@ -19,12 +19,25 @@ import PageResources from "./PageResources.vue";
 
 export default {
   name: "devtools",
+  data() {
+    return {
+      analizeButton: {
+        label: "Start analyzing data",
+        disabled: false
+      }
+    }
+  },
   components: {
     resources: PageResources,
   },
   methods:{
     refresh: function(){
+      if(!confirm("This will cause page to refresh.\nDo you want to proceed?")){ return; }
       chrome.devtools.inspectedWindow.reload();
+      this.analizeButton = {
+          label: "Analyzing data...",
+          disabled: true
+      };
     }
   }
 };
