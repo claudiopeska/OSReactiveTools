@@ -19,7 +19,8 @@
     "popper.js": "^1.16.1",
     "portal-vue": "^2.1.7",
     "vue": "^2.6.11",
-    "vue-json-component": "^0.4.1"
+    "vue-json-component": "^0.4.1",
+    "vue-sweetalert2": "^5.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

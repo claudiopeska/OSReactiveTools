@@ -5,7 +5,21 @@
         <h3>OutSystems Reactive Tools</h3>
       </b-col>
       <b-col>
-        <b-button size="sm" v-on:click="refresh" v-bind:disabled="analizeButton.disabled">{{ analizeButton.label }}</b-button>
+        <b-form-checkbox
+          v-model="analyzeSwitch.state"
+          :disabled="analyzeSwitch.disabled"
+          name="check-button"
+          switch
+          @change="toggleAnalizeSwitch"
+        >
+          {{ analyzeSwitch.label }}
+        </b-form-checkbox>
+        <!--<b-button
+          size="sm"
+          v-on:click="refresh"
+          v-bind:disabled="analizeButton.disabled"
+          ></b-button
+        >-->
       </b-col>
     </b-row>
     <div class="content">
@@ -21,25 +35,39 @@ export default {
   name: "devtools",
   data() {
     return {
-      analizeButton: {
+      analyzeSwitch: {
+        state: false,
+        disabled: false,
         label: "Start analyzing data",
-        disabled: false
-      }
-    }
+      },
+    };
   },
   components: {
     resources: PageResources,
   },
-  methods:{
-    refresh: function(){
-      if(!confirm("This will cause page to refresh.\nDo you want to proceed?")){ return; }
-      chrome.devtools.inspectedWindow.reload();
-      this.analizeButton = {
-          label: "Analyzing data...",
-          disabled: true
-      };
-    }
-  }
+  methods: {
+    toggleAnalizeSwitch() {
+      if (this.analyzeSwitch.state) {
+        this.analyzeSwitch.disabled = true;
+        this.$swal
+          .fire({
+            html: "This will cause page to refresh.<br>Do you want to proceed?",
+            showCancelButton: true,
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              chrome.devtools.inspectedWindow.reload();
+              this.analyzeSwitch.label = "Analyzing data...";
+            } else {
+              this.analyzeSwitch.state = false;
+            }
+            this.analyzeSwitch.disabled = false;
+          });
+      } else {
+        //todo: clear event
+      }
+    },
+  },
 };
 </script>
 
@@ -51,9 +79,11 @@ export default {
 html,
 body {
   height: 100%;
+  background-color: #e9ecef;
 }
 
-.main_app, .full-height {
+.main_app,
+.full-height {
   height: 100%;
 }
 
@@ -63,7 +93,7 @@ body {
   align-items: center;
 }
 
-.content{
+.content {
   height: calc(100% - 55px);
 }
 </style>

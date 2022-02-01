@@ -88,10 +88,7 @@ export default {
         },
         appNodeSelect(node, isSelected){
             if(isSelected){
-                this.selectedNode = node.data.children;
-                if(!this.selectedNode){
-                    this.selectedNode = node.data;
-                }
+                this.selectedNode = node.data;
             }
         },
         openResourceAction(){
@@ -99,6 +96,11 @@ export default {
                 this.selectedNode.data.url,
                 this.selectedNode.data.debugLine
             );
+        },
+        copyToClipboard(){
+            alert("copy on the way");
+            this.$refs.textjson.focus();
+            document.execCommand("copy");
         }
     }
 };

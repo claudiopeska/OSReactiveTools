@@ -23,17 +23,8 @@
     <b-col class="section">
       <!--Later when showing JSON also allow some search-->
       <div v-if="selectedNode">
-        <div v-if="Array.isArray(selectedNode)">
-          <b-tree-view
-            :data="selectedNode"
-            :showIcons="true"
-            :iconClassProp="icon"
-            :contextMenu="false"
-            @nodeSelect="appNodeSelect">
-          </b-tree-view>
-        </div>
-        <div v-else>
-          <b-row>
+        <div v-if="selectedNode.data">
+          <b-row class="mb-2">
             <b-col class="font-weight-bold">
               <i v-bind:class="selectedNode.icon"></i>
               {{ selectedNode.name }}
@@ -43,12 +34,36 @@
                 size="sm"
                 variant="info"
                 v-on:click="openResourceAction">
-                Open Action Return
+                Go to Source
               </b-button>
             </b-col>
           </b-row>
           <div v-if="selectedNode.data.response">
-            <json-view :data="selectedNode.data.response" :maxDepth="1" />
+            <b-tabs content-class="m-2" pills fill small>
+              <b-tab title="Preview" active>
+                <json-view :data="selectedNode.data.response" :maxDepth="1" />
+              </b-tab>
+              <b-tab title="Response">
+                <div class="position-relative">
+                  <b-button
+                    class="copyToClipboard"
+                    size="sm"
+                    variant="secondary"
+                    v-on:click="copyToClipboard">
+                      <i class="bi-clipboard"></i>
+                  </b-button>
+                  <b-form-textarea 
+                    v-model="selectedNode.data.response"
+                    ref="textjson" 
+                    v-on:focus="$event.target.select()"
+                    readonly 
+                    max-rows="99999" 
+                    no-auto-shrink 
+                    no-resize="true" 
+                  />
+                </div>
+              </b-tab>
+            </b-tabs>
           </div>
           <div v-else><b-col>No data yet</b-col></div>
         </div>
@@ -69,4 +84,15 @@
   height: 100%;
   overflow-y: auto;
 }
+
+.position-relative{
+  position: relative;
+}
+
+.copyToClipboard{
+  position: absolute;
+  right: 10px;
+  top: 10px
+}
+
 </style>
