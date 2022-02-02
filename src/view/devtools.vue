@@ -5,68 +5,36 @@
         <h3>OutSystems Reactive Tools</h3>
       </b-col>
       <b-col>
-        <b-form-checkbox
-          v-model="analyzeSwitch.state"
-          :disabled="analyzeSwitch.disabled"
-          name="check-button"
-          switch
-          @change="toggleAnalizeSwitch"
-        >
-          {{ analyzeSwitch.label }}
-        </b-form-checkbox>
-        <!--<b-button
-          size="sm"
-          v-on:click="refresh"
-          v-bind:disabled="analizeButton.disabled"
-          ></b-button
-        >-->
+        <network-analyzer :data="pageResources"></network-analyzer>
       </b-col>
     </b-row>
     <div class="content">
-      <resources class="pt-3"></resources>
+      <page-content class="pt-3" :data="pageResources"></page-content>
     </div>
   </b-container>
 </template>
 
 <script>
-import PageResources from "./PageResources.vue";
+import PageContent from "../components/PageContent.vue";
+import NetworkAnalyzer from "../components/NetworkAnalyzer.vue";
+import { ResourcesLoader } from "../js/ResourcesLoader.js";
 
 export default {
+  components: {
+    "page-content": PageContent,
+    "network-analyzer": NetworkAnalyzer,
+  },
   name: "devtools",
   data() {
     return {
-      analyzeSwitch: {
-        state: false,
-        disabled: false,
-        label: "Start analyzing data",
-      },
+      pageResources: null
     };
   },
-  components: {
-    resources: PageResources,
-  },
-  methods: {
-    toggleAnalizeSwitch() {
-      if (this.analyzeSwitch.state) {
-        this.analyzeSwitch.disabled = true;
-        this.$swal
-          .fire({
-            html: "This will cause page to refresh.<br>Do you want to proceed?",
-            showCancelButton: true,
-          })
-          .then((result) => {
-            if (result.isConfirmed) {
-              chrome.devtools.inspectedWindow.reload();
-              this.analyzeSwitch.label = "Analyzing data...";
-            } else {
-              this.analyzeSwitch.state = false;
-            }
-            this.analyzeSwitch.disabled = false;
-          });
-      } else {
-        //todo: clear event
-      }
-    },
+  mounted() {
+    //this should be executed when there is navigation
+    ResourcesLoader((loadedResources) => {
+      this.pageResources = loadedResources;
+    });
   },
 };
 </script>
