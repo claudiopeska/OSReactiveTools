@@ -74,7 +74,6 @@ export default {
         regexResult[1] = regexResult[1].replaceAll("/", ".");
 
         request.getContent((content) => {
-          //this.$set(dataAction, "response", );
           this.$emit("resourceResponse", {
             resourceName: regexResult[1],
             dataActionName: regexResult[2],
