@@ -13,7 +13,6 @@
     <div class="content">
       <page-content class="pt-3" :data="pageResources"></page-content>
     </div>
-    <div>{{ pageResources }}</div>
   </b-container>
 </template>
 
