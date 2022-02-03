@@ -37,12 +37,18 @@ export default {
   data() {
     return {
       searchKeyword: null,
+      searchResult: null,
     };
   },
-  computed: {
-    treeData(){
-      return BuildResourcesTree(this.data);
+  watch:{
+    data: function(newVal){
+      this.searchResult = newVal;
     }
+  },
+  computed: {
+    treeData() {
+      return BuildResourcesTree(this.searchResult);
+    },
   },
   methods: {
     selectNode(node, isSelected) {
@@ -51,31 +57,32 @@ export default {
       }
     },
     searchTree() {
-      /*var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
+      var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
       if (lowerSearchKeyword.length == 0) {
-        this.treeData = this.buildTreeData(this.data);
+        //restore original values
+        this.searchResult = this.data;
         return;
       }
 
-      var searchResult = {};
+      var result = {};
 
-      Object.entries(this.resources).forEach(([rkey, rvalue]) => {
+      Object.entries(this.data).forEach(([rkey, rvalue]) => {
         if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
-          searchResult[rkey] = rvalue;
+          result[rkey] = rvalue;
           return;
         }
 
         Object.entries(rvalue.dataActions).forEach(([dakey, davalue]) => {
           if (dakey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
-            if (!searchResult[rkey]) {
-              searchResult[rkey] = { ...rvalue };
-              searchResult[rkey].dataActions = {};
+            if (!result[rkey]) {
+              result[rkey] = { ...rvalue };
+              result[rkey].dataActions = {};
             }
-            searchResult[rkey].dataActions[dakey] = davalue;
+            result[rkey].dataActions[dakey] = davalue;
           }
         });
       });
-      this.treeData = this.buildTreeData(searchResult);*/
+      this.searchResult = result;
     },
   },
 };
