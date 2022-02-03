@@ -11,18 +11,11 @@
 </template>
 
 <script>
-
 const acceptRequestTypes = ["xhr"];
 //regex to identify resource and action from request url
 const requestUrlRegex = /(\w+\/\w+\/\w+)\/(\w+)$/g;
 
 export default {
-  prop: {
-    data: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
       analyzeSwitch: {
@@ -57,11 +50,15 @@ export default {
     },
     addNetworkListener() {
       this.networkListenerBound = this.networkListenerCallback.bind(this);
-      chrome.devtools.network.onRequestFinished.addListener(this.networkListenerBound);
+      chrome.devtools.network.onRequestFinished.addListener(
+        this.networkListenerBound
+      );
       chrome.devtools.inspectedWindow.reload();
     },
     removeNetworkListener() {
-      chrome.devtools.network.onRequestFinished.removeListener(this.networkListenerBound);
+      chrome.devtools.network.onRequestFinished.removeListener(
+        this.networkListenerBound
+      );
       this.networkListenerBound = null;
     },
     networkListenerCallback(request) {
@@ -76,14 +73,13 @@ export default {
 
         regexResult[1] = regexResult[1].replaceAll("/", ".");
 
-        var dataAction =
-          this.data[regexResult[1]]?.dataActions[regexResult[2]];
-        if (!dataAction) {
-          return;
-        }
-
         request.getContent((content) => {
-          this.$set(dataAction, "response", JSON.parse(content).data);
+          //this.$set(dataAction, "response", );
+          this.$emit("resourceResponse", {
+            resourceName: regexResult[1],
+            dataActionName: regexResult[2],
+            response: JSON.parse(content).data
+          });
         });
       }
     },

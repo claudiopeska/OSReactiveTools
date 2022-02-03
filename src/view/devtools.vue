@@ -5,12 +5,15 @@
         <h3>OutSystems Reactive Tools</h3>
       </b-col>
       <b-col>
-        <network-analyzer :data="pageResources"></network-analyzer>
+        <network-analyzer
+          v-on:resourceResponse="receiveResourceResponse"
+        ></network-analyzer>
       </b-col>
     </b-row>
     <div class="content">
       <page-content class="pt-3" :data="pageResources"></page-content>
     </div>
+    <div>{{ pageResources }}</div>
   </b-container>
 </template>
 
@@ -27,7 +30,7 @@ export default {
   name: "devtools",
   data() {
     return {
-      pageResources: null
+      pageResources: null,
     };
   },
   mounted() {
@@ -35,6 +38,18 @@ export default {
     ResourcesLoader((loadedResources) => {
       this.pageResources = loadedResources;
     });
+  },
+  methods: {
+    receiveResourceResponse(eventData) {
+      var dataAction =
+        this.pageResources[eventData.resourceName]?.dataActions[
+          eventData.dataActionName
+        ];
+      if (!dataAction) {
+        return;
+      }
+      this.$set(dataAction, "response", eventData.response);
+    },
   },
 };
 </script>
