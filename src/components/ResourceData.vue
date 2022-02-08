@@ -1,23 +1,26 @@
 <template>
   <div v-if="node">
-    <div v-if="node.data">
-      <b-row class="mb-2">
-        <b-col class="font-weight-bold">
-          <i v-bind:class="node.icon"></i>
-          {{ node.name }}
-        </b-col>
-        <b-col cols="auto">
-          <b-button size="sm" variant="info" v-on:click="openResourceAction">
-            Go to Source
-          </b-button>
-        </b-col>
-      </b-row>
-      <div v-if="node.data.response">
-        <resource-response :response="node.data.response"></resource-response>
-      </div>
-      <div v-else>
-        <b-col>No data yet</b-col>
-      </div>
+    <b-row class="mb-2">
+      <b-col class="font-weight-bold">
+        <i v-bind:class="node.icon"></i>
+        {{ node.name }}
+      </b-col>
+      <b-col cols="auto">
+        <b-button
+          size="sm"
+          v-bind:disabled="node.data.disableNavigate"
+          variant="info"
+          v-on:click="openResourceAction"
+        >
+          Go to Source
+        </b-button>
+      </b-col>
+    </b-row>
+    <div v-if="node.data.response">
+      <resource-response :response="node.data.response"></resource-response>
+    </div>
+    <div v-else-if="!node.children">
+      <b-col>No data yet</b-col>
     </div>
   </div>
   <div v-else>No node selected</div>

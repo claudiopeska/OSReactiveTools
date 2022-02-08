@@ -23,6 +23,10 @@ export var BuildResourcesTree = function (resources) {
                 id: rindex,
                 name: rkey,
                 icon: resourceTypeMapIcon[rvalue.type],
+                data: {
+                    url: rvalue.url,
+                    debugLine: 0
+                },
                 children: dataActions
             }
         );
@@ -33,6 +37,9 @@ export var BuildResourcesTree = function (resources) {
             id: -1,
             name: "App",
             icon: "bi-code-square",
+            data: {
+                disableNavigate: true
+            },
             children: hierarchy,
         },
     ];

@@ -1,7 +1,7 @@
 <template>
   <b-tabs content-class="m-2" pills fill small>
     <b-tab title="Preview" active>
-      <json-view :data="response" :maxDepth="1" />
+      <json-view class="json-tree-costumization" :data="response" :maxDepth="1" />
     </b-tab>
     <b-tab title="Response">
       <div class="position-relative">
@@ -58,5 +58,9 @@ export default {
   position: absolute;
   right: 10px;
   top: 10px;
+}
+
+.json-tree-costumization{
+  --vjc-arrow-size: 9px !important;
 }
 </style>
