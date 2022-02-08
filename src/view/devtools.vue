@@ -30,12 +30,17 @@ export default {
   data() {
     return {
       pageResources: null,
+      tabId: chrome.devtools.inspectedWindow.tabId,
+      resourceLoader: ResourcesLoader(this.resourcesLoaderCallback),
     };
   },
   mounted() {
-    //this should be executed when there is navigation
-    ResourcesLoader((loadedResources) => {
-      this.pageResources = loadedResources;
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+      if (tabId == this.tabId) {
+        if (changeInfo.url) {
+          this.resourceLoader.loadResources();
+        }
+      }
     });
   },
   methods: {
@@ -48,6 +53,9 @@ export default {
         return;
       }
       this.$set(dataAction, "response", eventData.response);
+    },
+    resourcesLoaderCallback(loadedResources) {
+      this.pageResources = loadedResources;
     },
   },
 };
