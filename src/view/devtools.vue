@@ -52,7 +52,7 @@ export default {
       if (!dataAction) {
         return;
       }
-      this.$set(dataAction, "response", eventData.response);
+      this.$set(dataAction, "requestData", eventData.requestData);
     },
     resourcesLoaderCallback(loadedResources) {
       this.pageResources = loadedResources;

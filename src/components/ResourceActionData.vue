@@ -1,7 +1,18 @@
 <template>
   <b-tabs content-class="m-2" pills fill small>
+    <b-tab title="Screen Variables">
+      <json-view
+        class="json-tree-costumization"
+        :data="data.variables"
+        :maxDepth="1"
+      />
+    </b-tab>
     <b-tab title="Preview" active>
-      <json-view class="json-tree-costumization" :data="response" :maxDepth="1" />
+      <json-view
+        class="json-tree-costumization"
+        :data="data.response"
+        :maxDepth="1"
+      />
     </b-tab>
     <b-tab title="Response">
       <div class="position-relative">
@@ -14,7 +25,7 @@
           <i class="bi-clipboard"></i>
         </b-button>
         <b-form-textarea
-          v-model="response"
+          v-model="data.response"
           ref="textjson"
           v-on:focus="$event.target.select()"
           readonly
@@ -35,7 +46,7 @@ export default {
     "json-view": JSONView,
   },
   props: {
-    response: {
+    data: {
       type: Object,
       required: true,
     },
@@ -60,7 +71,7 @@ export default {
   top: 10px;
 }
 
-.json-tree-costumization{
+.json-tree-costumization {
   --vjc-arrow-size: 9px !important;
 }
 </style>

@@ -72,12 +72,15 @@ export default {
         }
 
         regexResult[1] = regexResult[1].replaceAll("/", ".");
-
+        
         request.getContent((content) => {
           this.$emit("resourceResponse", {
             resourceName: regexResult[1],
             dataActionName: regexResult[2],
-            response: JSON.parse(content).data
+            requestData:{
+              variables: JSON.parse(request.request.postData.text).screenData.variables,
+              response: JSON.parse(content).data
+            }
           });
         });
       }

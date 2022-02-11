@@ -16,8 +16,8 @@
         </b-button>
       </b-col>
     </b-row>
-    <div v-if="node.data.response">
-      <resource-response :response="node.data.response"></resource-response>
+    <div v-if="node.data.requestData">
+      <resource-action-data :data="node.data.requestData"></resource-action-data>
     </div>
     <div v-else-if="!node.children">
       <b-col>No data yet</b-col>
@@ -27,11 +27,11 @@
 </template>
 
 <script>
-import ResourceResponse from "./ResourceResponse.vue";
+import ResourceActionData from "./ResourceActionData.vue";
 
 export default {
   components: {
-    "resource-response": ResourceResponse,
+    "resource-action-data": ResourceActionData,
   },
   props: {
     node: {
