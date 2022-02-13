@@ -13,6 +13,7 @@
       :showIcons="true"
       :iconClassProp="icon"
       :contextMenu="false"
+      :renameNodeOnDblClick="false"
       @nodeSelect="selectNode"
     >
     </b-tree-view>

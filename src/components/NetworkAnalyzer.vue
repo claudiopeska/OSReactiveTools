@@ -78,7 +78,7 @@ export default {
             resourceName: regexResult[1],
             dataActionName: regexResult[2],
             requestData:{
-              variables: JSON.parse(request.request.postData.text).screenData.variables,
+              variables: JSON.parse(request.request.postData.text).screenData?.variables,
               response: JSON.parse(content).data
             }
           });

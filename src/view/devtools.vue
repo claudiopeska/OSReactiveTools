@@ -5,48 +5,38 @@
         <h3>OutSystems Reactive Tools</h3>
       </b-col>
       <b-col>
-        <network-analyzer
-          v-on:resourceResponse="receiveResourceResponse"
-        ></network-analyzer>
+        <network-analyzer v-on:resourceResponse="receiveResourceResponse" />
       </b-col>
     </b-row>
     <div class="content">
-      <page-content class="pt-3" :data="pageResources"></page-content>
+      <page-content class="pt-3" :data="resources"></page-content>
     </div>
+    <resource-listener v-on:newResource="receiveNewResource" />
   </b-container>
 </template>
 
 <script>
 import PageContent from "../components/PageContent.vue";
 import NetworkAnalyzer from "../components/NetworkAnalyzer.vue";
-import { ResourcesLoader } from "../js/ResourcesLoader.js";
+import ResourceListener from "../components/ResourceListener.vue";
 
 export default {
   components: {
     "page-content": PageContent,
     "network-analyzer": NetworkAnalyzer,
+    "resource-listener": ResourceListener,
   },
   name: "devtools",
   data() {
     return {
-      pageResources: null,
+      resources: {},
       tabId: chrome.devtools.inspectedWindow.tabId,
-      resourceLoader: ResourcesLoader(this.resourcesLoaderCallback),
     };
-  },
-  mounted() {
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-      if (tabId == this.tabId) {
-        if (changeInfo.url) {
-          this.resourceLoader.loadResources();
-        }
-      }
-    });
   },
   methods: {
     receiveResourceResponse(eventData) {
       var dataAction =
-        this.pageResources[eventData.resourceName]?.dataActions[
+        this.resources[eventData.resourceName]?.dataActions[
           eventData.dataActionName
         ];
       if (!dataAction) {
@@ -54,8 +44,10 @@ export default {
       }
       this.$set(dataAction, "requestData", eventData.requestData);
     },
-    resourcesLoaderCallback(loadedResources) {
-      this.pageResources = loadedResources;
+    receiveNewResource(eventData) {
+      if (!this.resources[eventData.name]) {
+        this.$set(this.resources, eventData.name, eventData);
+      }
     },
   },
 };
