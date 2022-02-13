@@ -79,7 +79,8 @@ export default {
             dataActionName: regexResult[2],
             requestData:{
               variables: JSON.parse(request.request.postData.text).screenData?.variables,
-              response: JSON.parse(content).data
+              response: JSON.parse(content).data,
+              contentLength: request.request.headers.find( header => header.name.toLowerCase() == "content-length")?.value
             }
           });
         });

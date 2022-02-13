@@ -9,6 +9,7 @@
       </b-col>
     </b-row>
     <div class="content">
+      <!--<div>{{resources}}</div>-->
       <page-content class="pt-3" :data="resources"></page-content>
     </div>
     <resource-listener v-on:newResource="receiveNewResource" />
@@ -43,6 +44,11 @@ export default {
         return;
       }
       this.$set(dataAction, "requestData", eventData.requestData);
+      var requestCount = dataAction.requestsCount
+        ? dataAction.requestsCount + 1
+        : 1;
+      dataAction.requestsCount = requestCount;
+      this.$set(dataAction.requestData, "requestsCount", requestCount);
     },
     receiveNewResource(eventData) {
       if (!this.resources[eventData.name]) {

@@ -1,5 +1,13 @@
 <template>
   <b-tabs content-class="m-2" pills fill small>
+    <b-tab title="Action Info">
+      <div>
+        Requests count: <strong>{{ data.requestsCount }}</strong>
+      </div>
+      <div>
+        Content length: <strong>{{ data.contentLength }}</strong>
+      </div>
+    </b-tab>
     <b-tab title="Screen Variables">
       <json-view
         class="json-tree-costumization"
