@@ -13,19 +13,19 @@
             var regexResult = key.match(regexSplit);
             if (regexResult && regexResult.length) {
 
-                var moduleName = "";
+                var moduleName = null;
                 if (regexResult.length == 4) {
                     moduleName = regexResult[1] + "$";
                 }
 
                 var variableName = regexResult[regexResult.length - 1];
-                var isClientVar = regexResult.indexOf(clientVariableIdentifier) >= 0;
+                var isClientVar = moduleName && regexResult.indexOf(clientVariableIdentifier) >= 0;
                 result.push(
                     {
                         key: key,
-                        name: moduleName + variableName,
-                        isClientVar: isClientVar,
-                        value: localStorage.getItem(key)
+                        name: (moduleName ? moduleName : "") + variableName,
+                        value: localStorage.getItem(key),
+                        isManMade: isClientVar
                     }
                 );
             }

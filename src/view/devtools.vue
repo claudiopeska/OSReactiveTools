@@ -14,7 +14,7 @@
       <page-content class="pt-3" :data="appRoot"></page-content>
     </div>
     <resource-listener v-on:newResource="receiveNewResource" />
-    <local-storage v-on:localStorage="receiveLocalStorage" />
+    <local-storage-reader v-on:localStorage="receiveLocalStorage" />
   </b-container>
 </template>
 
@@ -22,14 +22,14 @@
 import PageContent from "../components/PageContent.vue";
 import NetworkAnalyzer from "../components/NetworkAnalyzer.vue";
 import ResourceListener from "../components/ResourceListener.vue";
-import AppLocalStorage from "../components/AppLocalStorage.vue";
+import LocalStorageReader from "../components/LocalStorageReader.vue";
 
 export default {
   components: {
     "page-content": PageContent,
     "network-analyzer": NetworkAnalyzer,
     "resource-listener": ResourceListener,
-    "local-storage": AppLocalStorage,
+    "local-storage-reader": LocalStorageReader,
   },
   name: "devtools",
   data() {

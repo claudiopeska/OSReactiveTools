@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Object.keys(data.resources).length">
+  <div v-if="Object.keys(appRoot.resources).length">
     <b-input-group class="mb-2">
       <b-form-input
         v-model="searchKeyword"
@@ -29,7 +29,7 @@ export default {
     bTreeView,
   },
   props: {
-    data: {
+    appRoot: {
       type: Object,
       required: true,
     },
@@ -41,7 +41,7 @@ export default {
     };
   },
   watch: {
-    data: {
+    appRoot: {
       deep: true,
       handler: function (newVal) {
         this.searchResult = newVal;
@@ -63,13 +63,13 @@ export default {
       var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
       if (lowerSearchKeyword.length == 0) {
         //restore original values
-        this.searchResult = this.data;
+        this.searchResult = this.appRoot;
         return;
       }
 
       var result = {};
 
-      Object.entries(this.data.resources).forEach(([rkey, rvalue]) => {
+      Object.entries(this.appRoot.resources).forEach(([rkey, rvalue]) => {
         if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
           result[rkey] = rvalue;
           return;
@@ -85,7 +85,11 @@ export default {
           }
         });
       });
-      this.searchResult = result;
+      
+      this.searchResult = {
+        data: this.appRoot.data,
+        resources: result
+      };
     },
   },
 };

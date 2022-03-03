@@ -1,7 +1,7 @@
 <template>
   <b-row class="full-height p-2">
     <b-col class="section border-right">
-      <resources-tree :data="data" v-on:nodeSelect="selectedNode = $event" />
+      <resources-tree :appRoot="data" v-on:nodeSelect="selectedNode = $event" />
     </b-col>
     <b-col class="section">
       <resource-data :node="selectedNode"></resource-data>
