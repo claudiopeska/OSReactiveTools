@@ -9,10 +9,12 @@
       </b-col>
     </b-row>
     <div class="content">
-      <!--<div>{{resources}}</div>-->
-      <page-content class="pt-3" :data="resources"></page-content>
+      <!--{{ Object.keys(appRoot.resources) }}-->
+      <!--{{ appRoot }}-->
+      <page-content class="pt-3" :data="appRoot"></page-content>
     </div>
     <resource-listener v-on:newResource="receiveNewResource" />
+    <local-storage v-on:localStorage="receiveLocalStorage" />
   </b-container>
 </template>
 
@@ -20,24 +22,28 @@
 import PageContent from "../components/PageContent.vue";
 import NetworkAnalyzer from "../components/NetworkAnalyzer.vue";
 import ResourceListener from "../components/ResourceListener.vue";
+import AppLocalStorage from "../components/AppLocalStorage.vue";
 
 export default {
   components: {
     "page-content": PageContent,
     "network-analyzer": NetworkAnalyzer,
     "resource-listener": ResourceListener,
+    "local-storage": AppLocalStorage,
   },
   name: "devtools",
   data() {
     return {
-      resources: {},
-      tabId: chrome.devtools.inspectedWindow.tabId,
+      appRoot: {
+        data: {},
+        resources: {},
+      },
     };
   },
   methods: {
     receiveResourceResponse(eventData) {
       var dataAction =
-        this.resources[eventData.resourceName]?.dataActions[
+        this.appRoot.resources[eventData.resourceName]?.dataActions[
           eventData.dataActionName
         ];
       if (!dataAction) {
@@ -51,9 +57,12 @@ export default {
       this.$set(dataAction.requestData, "requestsCount", requestCount);
     },
     receiveNewResource(eventData) {
-      if (!this.resources[eventData.name]) {
-        this.$set(this.resources, eventData.name, eventData);
+      if (!this.appRoot.resources[eventData.name]) {
+        this.$set(this.appRoot.resources, eventData.name, eventData);
       }
+    },
+    receiveLocalStorage(eventData) {
+      this.$set(this.appRoot.data, "localStorage", eventData);
     },
   },
 };

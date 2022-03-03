@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data">
+  <div v-if="Object.keys(data.resources).length">
     <b-input-group class="mb-2">
       <b-form-input
         v-model="searchKeyword"
@@ -13,7 +13,6 @@
       :showIcons="true"
       :iconClassProp="icon"
       :contextMenu="false"
-      :renameNodeOnDblClick="false"
       @nodeSelect="selectNode"
     >
     </b-tree-view>
@@ -41,10 +40,13 @@ export default {
       searchResult: null,
     };
   },
-  watch:{
-    data: function(newVal){
-      this.searchResult = newVal;
-    }
+  watch: {
+    data: {
+      deep: true,
+      handler: function (newVal) {
+        this.searchResult = newVal;
+      },
+    },
   },
   computed: {
     treeData() {
@@ -67,7 +69,7 @@ export default {
 
       var result = {};
 
-      Object.entries(this.data).forEach(([rkey, rvalue]) => {
+      Object.entries(this.data.resources).forEach(([rkey, rvalue]) => {
         if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
           result[rkey] = rvalue;
           return;

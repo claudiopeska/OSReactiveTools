@@ -4,11 +4,11 @@
       <div>
         Requests count: <strong>{{ data.requestsCount }}</strong>
       </div>
+    </b-tab>
+    <b-tab title="Screen Variables">
       <div>
         Content length: <strong>{{ data.contentLength }}</strong>
       </div>
-    </b-tab>
-    <b-tab title="Screen Variables">
       <json-view
         class="json-tree-costumization"
         :data="data.variables"

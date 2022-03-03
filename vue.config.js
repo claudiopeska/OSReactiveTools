@@ -36,6 +36,7 @@ module.exports = {
           to: `${path.resolve('dist')}/manifest.json`
         },
         { from: 'src/assets', to: 'assets' }, //ignore: ['icon.xcf']
+        { from: 'src/InjectionJS', to: 'js' }
       ])
     ],
     output: {
