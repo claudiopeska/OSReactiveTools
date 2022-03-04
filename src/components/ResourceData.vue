@@ -22,8 +22,8 @@
     <div v-else-if="!node.children">
       <b-col>No data yet</b-col>
     </div>
-    <div v-else-if="node.data.localStorage.length">
-      <resource-app-data :data="node.data.localStorage"/>
+    <div v-else-if="node.data.localStorage">
+      <resource-app-data :data="node.data.localStorage" />
     </div>
   </div>
   <div v-else>No node selected</div>
@@ -36,7 +36,7 @@ import ResourceAppData from "./ResourceAppData.vue";
 export default {
   components: {
     "resource-action-data": ResourceActionData,
-    "resource-app-data": ResourceAppData
+    "resource-app-data": ResourceAppData,
   },
   props: {
     node: {

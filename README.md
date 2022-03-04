@@ -5,19 +5,14 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and minifies for development
 ```
-npm run serve
+npm run build-watch
 ```
 
 ### Compiles and minifies for production
 ```
 npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
 ```
 
 ### Customize configuration
