@@ -13,8 +13,9 @@ const newLineRegex = /\r\n|\r|\n/g;
 const resourceTypeRegex = /OSView\.BaseView\.Base(\w+)/g;
 
 //actions regex to identify exposed actions
-const dataActionRegex = /controller\.callDataAction\("DataAction(\w+)"/g;
-const aggrActionRegex = /controller\.callAggregateWithStartIndexAndClientVars\("ScreenDataSet(\w+)/g;
+const dataActionRegex   = /controller\.callDataAction\("DataAction(\w+)"/g;
+const aggrActionRegex   = /controller\.callAggregateWithStartIndexAndClientVars\("ScreenDataSet(\w+)/g;
+const clientActionRegex = /Controller\.prototype\._(\w+)\$Action/g;
 
 const fetchsRegex = [
     {
@@ -57,6 +58,8 @@ export default {
 
             resource.getContent((content) => {
                 var lines = content.split(newLineRegex);
+
+                resourceObject.clientActions = [];
                 resourceObject.dataActions = lines.reduce((linesResult, line, index) => {
                     //validate if line has data action
                     var dataActionName = this.getDataActionRegex(line);
@@ -78,6 +81,15 @@ export default {
                             if (resourceTypeResult && resourceTypeResult.length > 1) {
                                 resourceObject.type = resourceTypeResult[1];
                             }
+                        }
+                        //load client actions
+                        var clientActionName = this.getScreenActionRegex(line);
+                        if(clientActionName){
+                            resourceObject.clientActions.push({
+                                actionName: clientActionName,
+                                url: resource.url,
+                                debugLine: index
+                            });
                         }
                     }
 
@@ -104,6 +116,17 @@ export default {
                         }
                     };
                 }
+            }
+            return null;
+        },
+        getScreenActionRegex(value){
+            //reset regex index
+            clientActionRegex.lastIndex = 0;
+
+            var regexResult = clientActionRegex.exec(value);
+            if(regexResult && regexResult.length > 1){
+                //return client action name
+                return regexResult[1];
             }
             return null;
         }

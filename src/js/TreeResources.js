@@ -12,14 +12,24 @@ export var BuildResourcesTree = function (appData) {
     var hierarchy = [];
 
     Object.entries(appData.resources).forEach(([rkey, rvalue], rindex) => {
-        var dataActions = [];
+        var actions = [];
+        //add dataActions
         Object.entries(rvalue.dataActions).forEach(([, davalue], daindex) => {
-            dataActions.push({
+            actions.push({
                 id: daindex + (10000 * rindex),
                 name: davalue.name,
                 icon: resourceTypeMapIcon[davalue.type],
                 data: davalue,
             });
+        });
+        //add clientActions
+        actions.push({
+            id: rindex + 1000000,
+            name: "Client Actions",
+            data: {
+                disableNavigate: true,
+                clientActions: rvalue.clientActions 
+            }
         });
         hierarchy.push(
             {
@@ -30,7 +40,7 @@ export var BuildResourcesTree = function (appData) {
                     url: rvalue.url,
                     debugLine: 0
                 },
-                children: dataActions
+                children: actions
             }
         );
     });

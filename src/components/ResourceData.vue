@@ -10,7 +10,7 @@
           size="sm"
           v-bind:disabled="node.data.disableNavigate"
           variant="info"
-          v-on:click="openResourceAction"
+          v-on:click="openResourceAction(node.data.url, node.data.debugLine)"
         >
           Go to Source
         </b-button>
@@ -18,6 +18,17 @@
     </b-row>
     <div v-if="node.data.requestData">
       <resource-action-data :data="node.data.requestData" />
+    </div>
+    <div v-else-if="node.data.clientActions">
+      <b-col
+        v-for="item in node.data.clientActions"
+        v-bind:key="item.actionName">
+        <b-link
+          href="#"
+          v-on:click="openResourceAction(item.url, item.debugLine)">
+          {{ item.actionName }}
+        </b-link>
+      </b-col>
     </div>
     <div v-else-if="!node.children">
       <b-col>No data yet</b-col>
@@ -45,11 +56,8 @@ export default {
     },
   },
   methods: {
-    openResourceAction() {
-      chrome.devtools.panels.openResource(
-        this.node.data.url,
-        this.node.data.debugLine
-      );
+    openResourceAction(url, debugLine) {
+      chrome.devtools.panels.openResource(url, debugLine);
     },
   },
 };
