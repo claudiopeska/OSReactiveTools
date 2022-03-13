@@ -26,6 +26,7 @@ export var BuildResourcesTree = function (appData) {
         actions.push({
             id: rindex + 1000000,
             name: "Client Actions",
+            icon: "bi-circle",
             data: {
                 disableNavigate: true,
                 clientActions: rvalue.clientActions 
