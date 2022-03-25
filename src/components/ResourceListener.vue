@@ -60,6 +60,7 @@ export default {
                 var lines = content.split(newLineRegex);
 
                 resourceObject.clientActions = [];
+                resourceObject.serverActions = {};
                 resourceObject.dataActions = lines.reduce((linesResult, line, index) => {
                     //validate if line has data action
                     var dataActionName = this.getDataActionRegex(line);

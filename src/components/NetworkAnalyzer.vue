@@ -78,6 +78,7 @@ export default {
             resourceName: regexResult[1],
             dataActionName: regexResult[2],
             requestData:{
+              inputParameters: JSON.parse(request.request.postData.text).inputParameters,
               variables: JSON.parse(request.request.postData.text).screenData?.variables,
               response: JSON.parse(content).data,
               contentLength: request.request.headers.find( header => header.name.toLowerCase() == "content-length")?.value

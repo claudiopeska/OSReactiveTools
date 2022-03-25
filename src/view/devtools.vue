@@ -9,8 +9,6 @@
       </b-col>
     </b-row>
     <div class="content">
-      <!--{{ Object.keys(appRoot.resources) }}-->
-      <!--{{ appRoot }}-->
       <page-content class="pt-3" :data="appRoot"></page-content>
     </div>
     <resource-listener v-on:newResource="receiveNewResource" />
@@ -47,6 +45,12 @@ export default {
           eventData.dataActionName
         ];
       if (!dataAction) {
+        //if it isn't a dataAction then most likely a server call inside a client action
+        this.$set(
+          this.appRoot.resources[eventData.resourceName].serverActions,
+          eventData.dataActionName,
+          eventData.requestData
+        );
         return;
       }
       this.$set(dataAction, "requestData", eventData.requestData);
