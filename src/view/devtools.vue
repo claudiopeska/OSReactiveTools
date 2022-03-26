@@ -49,7 +49,7 @@ export default {
         this.$set(
           this.appRoot.resources[eventData.resourceName].serverActions,
           eventData.dataActionName,
-          eventData.requestData
+          { requestData: eventData.requestData }
         );
         return;
       }

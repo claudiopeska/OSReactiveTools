@@ -1,14 +1,14 @@
 export var BuildResourcesTree = function (appData) {
-    
-    if(!appData) return;
-    
+
+    if (!appData) return;
+
     const resourceTypeMapIcon = {
         "WebScreen": "bi-window",
         "WebBlock": "bi-puzzle",
         "ScreenDataSet": "bi-table",
         "DataAction": "bi-box-arrow-left",
     }
-    
+
     var hierarchy = [];
 
     Object.entries(appData.resources).forEach(([rkey, rvalue], rindex) => {
@@ -29,9 +29,20 @@ export var BuildResourcesTree = function (appData) {
             icon: "bi-circle",
             data: {
                 disableNavigate: true,
-                clientActions: rvalue.clientActions 
+                clientActions: rvalue.clientActions
             }
         });
+        //add server actions
+        Object.entries(rvalue.serverActions).forEach(([sakey, savalue], saindex) => {
+            savalue.disableNavigate = true;
+            actions.push({
+                id: saindex + (2000000 * rindex),
+                name: sakey,
+                icon: "bi-circle-fill",
+                data: savalue,
+            });
+        });
+
         hierarchy.push(
             {
                 id: rindex,
