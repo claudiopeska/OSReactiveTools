@@ -5,7 +5,14 @@
         Requests count: <strong>{{ data.requestsCount }}</strong>
       </div>
     </b-tab>
-    <b-tab title="Screen Variables">
+    <b-tab v-if="data.inputParameters" title="Input Variables">
+      <json-view
+        class="json-tree-costumization"
+        :data="data.inputParameters"
+        :maxDepth="1"
+      />
+    </b-tab>
+    <b-tab v-if="data.variables" title="Screen Variables">
       <div>
         Content length: <strong>{{ data.contentLength }}</strong>
       </div>
