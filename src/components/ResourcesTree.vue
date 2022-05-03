@@ -4,7 +4,7 @@
       <b-form-input
         v-model="searchKeyword"
         placeholder="Search"
-        @change="searchTree"
+        @change="searchTree(appRoot)"
       >
       </b-form-input>
     </b-input-group>
@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      searchKeyword: null,
+      searchKeyword: "",
       searchResult: null,
     };
   },
@@ -44,7 +44,7 @@ export default {
     appRoot: {
       deep: true,
       handler: function (newVal) {
-        this.searchResult = newVal;
+        this.searchTree(newVal);
       },
     },
   },
@@ -59,17 +59,18 @@ export default {
         this.$emit("nodeSelect", node.data);
       }
     },
-    searchTree() {
+    searchTree(tree) {
       var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
+      
       if (lowerSearchKeyword.length == 0) {
         //restore original values
-        this.searchResult = this.appRoot;
+        this.searchResult = tree;
         return;
       }
 
       var result = {};
 
-      Object.entries(this.appRoot.resources).forEach(([rkey, rvalue]) => {
+      Object.entries(tree.resources).forEach(([rkey, rvalue]) => {
         if (rkey.toLowerCase().indexOf(lowerSearchKeyword) != -1) {
           result[rkey] = rvalue;
           return;
@@ -87,7 +88,7 @@ export default {
       });
       
       this.searchResult = {
-        data: this.appRoot.data,
+        data: tree.data,
         resources: result
       };
     },
