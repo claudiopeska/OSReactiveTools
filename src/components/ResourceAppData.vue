@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import AppClientVariables from "./ResourcesAppClientVariables.vue";
+import AppClientVariables from "@/components/ResourcesAppClientVariables.vue";
 
 export default {
   components: {

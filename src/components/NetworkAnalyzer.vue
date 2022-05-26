@@ -6,14 +6,12 @@
     switch
     @change="toggleAnalizeSwitch"
   >
-    {{ analyzeSwitch.state ? analyzeSwitch.labelOn : analyzeSwitch.labelOff }}
+    {{ analyzeSwitch.state ? "Analyzing data..." : "Start analyzing data" }}
   </b-form-checkbox>
 </template>
 
 <script>
-const acceptRequestTypes = ["xhr"];
-//regex to identify resource and action from request url
-const requestUrlRegex = /(\w+\/\w+\/\w+)\/(\w+)$/g;
+import NetworkListenerService from "@/services/NetworkListenerService.js";
 
 export default {
   data() {
@@ -21,8 +19,6 @@ export default {
       analyzeSwitch: {
         state: false,
         disabled: false,
-        labelOff: "Start analyzing data",
-        labelOn: "Analyzing data...",
       },
       networkListenerBound: null,
     };
@@ -38,53 +34,14 @@ export default {
           })
           .then((result) => {
             if (result.isConfirmed) {
-              this.addNetworkListener();
+              NetworkListenerService.addNetworkListener();
             } else {
               this.analyzeSwitch.state = false;
             }
             this.analyzeSwitch.disabled = false;
           });
       } else {
-        this.removeNetworkListener();
-      }
-    },
-    addNetworkListener() {
-      this.networkListenerBound = this.networkListenerCallback.bind(this);
-      chrome.devtools.network.onRequestFinished.addListener(
-        this.networkListenerBound
-      );
-      chrome.devtools.inspectedWindow.reload();
-    },
-    removeNetworkListener() {
-      chrome.devtools.network.onRequestFinished.removeListener(
-        this.networkListenerBound
-      );
-      this.networkListenerBound = null;
-    },
-    networkListenerCallback(request) {
-      if (acceptRequestTypes.indexOf(request._resourceType) >= 0) {
-        //reset regex
-        requestUrlRegex.lastIndex = 0;
-
-        var regexResult = requestUrlRegex.exec(request.request.url);
-        if (!regexResult || regexResult.length == 0) {
-          return;
-        }
-
-        regexResult[1] = regexResult[1].replaceAll("/", ".");
-        
-        request.getContent((content) => {
-          this.$emit("resourceResponse", {
-            resourceName: regexResult[1],
-            dataActionName: regexResult[2],
-            requestData:{
-              inputParameters: JSON.parse(request.request.postData.text).inputParameters,
-              variables: JSON.parse(request.request.postData.text).screenData?.variables,
-              response: JSON.parse(content).data,
-              contentLength: request.request.headers.find( header => header.name.toLowerCase() == "content-length")?.value
-            }
-          });
-        });
+        NetworkListenerService.removeNetworkListener();
       }
     },
   },

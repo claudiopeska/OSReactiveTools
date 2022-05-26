@@ -1,10 +1,10 @@
 <template>
-  <div v-if="Object.keys(appRoot.resources).length">
+  <div v-if="Object.keys(store.resources).length">
     <b-input-group class="mb-2">
       <b-form-input
         v-model="searchKeyword"
         placeholder="Search"
-        @change="searchTree(appRoot)"
+        @change="searchTree(store)"
       >
       </b-form-input>
     </b-input-group>
@@ -21,18 +21,13 @@
 </template>
 
 <script>
+import store from '@/store/store.js';
 import { bTreeView } from "bootstrap-vue-treeview";
-import { BuildResourcesTree } from "../js/TreeResources.js";
+import { BuildResourcesTree } from "@/js/TreeResources.js";
 
 export default {
   components: {
     bTreeView,
-  },
-  props: {
-    appRoot: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
@@ -40,17 +35,10 @@ export default {
       searchResult: null,
     };
   },
-  watch: {
-    appRoot: {
-      deep: true,
-      handler: function (newVal) {
-        this.searchTree(newVal);
-      },
-    },
-  },
   computed: {
+    store,
     treeData() {
-      return BuildResourcesTree(this.searchResult);
+      return BuildResourcesTree(this.searchResult ? this.searchResult : this.store);
     },
   },
   methods: {
@@ -63,8 +51,8 @@ export default {
       var lowerSearchKeyword = this.searchKeyword.trim().toLowerCase();
       
       if (lowerSearchKeyword.length == 0) {
-        //restore original values
-        this.searchResult = tree;
+        //clear search result
+        this.searchResult = null;
         return;
       }
 

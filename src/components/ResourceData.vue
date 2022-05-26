@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import ResourceActionData from "./ResourceActionData.vue";
-import ResourceAppData from "./ResourceAppData.vue";
+import ResourceActionData from "@/components/ResourceActionData.vue";
+import ResourceAppData from "@/components/ResourceAppData.vue";
 
 export default {
   components: {

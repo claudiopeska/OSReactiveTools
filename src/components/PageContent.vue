@@ -1,7 +1,7 @@
 <template>
   <b-row class="full-height p-2">
     <b-col class="section border-right">
-      <resources-tree :appRoot="data" v-on:nodeSelect="selectedNode = $event" />
+      <resources-tree v-on:nodeSelect="selectedNode = $event" />
     </b-col>
     <b-col class="section">
       <resource-data :node="selectedNode"></resource-data>
@@ -10,25 +10,19 @@
 </template>
 
 <script>
-import ResourcesTree from "./ResourcesTree.vue";
-import ResourceData from "./ResourceData.vue";
+import ResourcesTree from "@/components/ResourcesTree.vue";
+import ResourceData from "@/components/ResourceData.vue";
 
 export default {
   components: {
     "resources-tree": ResourcesTree,
     "resource-data": ResourceData,
   },
-  props: {
-    data: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
       selectedNode: null,
     };
-  },
+  }
 };
 </script>
 
