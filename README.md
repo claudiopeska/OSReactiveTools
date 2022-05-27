@@ -1,6 +1,6 @@
 # OutSystems Reactive Tools <sup>for Chrome</sup>
 
-<img width="1079" alt="Extension Preview" src="https://user-images.githubusercontent.com/1500997/170683893-5df3cc75-5978-40c5-b247-bc8dc6219cfa.png">
+<img width="1141" alt="Extension Preview" src="https://user-images.githubusercontent.com/1500997/170709048-c2014aae-11ae-4de8-8a0a-73de00e2557c.png">
 
 ## How to install
 
