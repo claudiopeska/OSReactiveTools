@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "name": "OS Reactive Tools",
-    "description": "OS Reactive Tools",
-    "version": "0.0.1",
+    "name": "OutSystems Reactive Tools",
+    "description": "OutSystems Reactive Tools is a tool that allows you to inspect OutSystems Reactive applications, providing a better way to visualize screen action, data actions, aggregates, client variables directly in the browser. To get started, just open the Chrome devtools and switch to the \"OS Reactive Tools\" tab.",
+    "version": "1.0.0",
     "icons": {
-        "48": "assets/icon.png"
+        "48": "assets/icon48.png"
     },
     "devtools_page": "devtools.html",
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
