@@ -4,9 +4,6 @@
 
 ## How to install
 
-### From the Chrome Web Store
-LINK TO CHROME STORE
-
 ### From Github
 1. Download the latest release from the [releases section](https://github.com/claudiopeska/OSReactiveTools/releases).
 2. Unzip the file contents to a new folder
