@@ -7,7 +7,10 @@ function receiveLocalStorage(response) {
 }
 
 class LocalStorageReaderService {
-    tabId = chrome.devtools.inspectedWindow.tabId;
+    
+    constructor(){
+        this.tabId = chrome.devtools.inspectedWindow.tabId;
+    }
 
     readLocalStorage() {
         //inject local storage reader javascript script

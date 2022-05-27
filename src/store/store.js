@@ -9,13 +9,10 @@ export const addResource = (resource) => {
 };
 
 export const addResourceResponse = (response) => {
-    var dataAction =
-        state.resources[response.resourceName]?.dataActions[
-        response.dataActionName
-        ];
+    var dataAction = state.resources[response.resourceName]?.dataActions[response.dataActionName];
     if (!dataAction) {
         //if it isn't a dataAction then most likely a server call inside a client action
-        this.$set(
+        Vue.set(
             state.resources[response.resourceName].serverActions,
             response.dataActionName,
             { requestData: response.requestData }
@@ -33,5 +30,3 @@ export const addResourceResponse = (response) => {
 export const addLocalStorage = (localStorage) => {
     Vue.set(state.data, "localStorage", localStorage);
 }
-
-//export const insertPost = (post) => state.posts.push(post)

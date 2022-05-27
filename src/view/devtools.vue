@@ -18,7 +18,7 @@
 import ResourceListenerService from "@/services/ResourceListenerService.js";
 import LocalStorageReaderService from "@/services/LocalStorageReaderService.js";
 import PageContent from "@/components/PageContent.vue";
-import NetworkAnalyzer from "../components/NetworkAnalyzer.vue";
+import NetworkAnalyzer from "@/components/NetworkAnalyzer.vue";
 
 export default {
   components: {
